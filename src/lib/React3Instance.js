@@ -102,7 +102,7 @@ class React3DInstance {
 
     if (window.altspace && window.altspace.inClient) {
       // Shim out some methods that exist on WebGLRenderer but not AltspaceRenderer
-      const noop = function () {};
+      const noop = function noop() {};
       const renderer = window.altspace.getThreeJSRenderer();
       renderer.setViewport = noop;
       renderer.setSize = noop;
@@ -110,7 +110,7 @@ class React3DInstance {
       this._renderer = renderer;
       const camera = new THREE.PerspectiveCamera();
       this._mainCamera = camera;
-      window.altspace.getThreeJSTrackingSkeleton().then(function (s) {
+      window.altspace.getThreeJSTrackingSkeleton().then((s) => {
         const skeleton = s;
         skeleton.getJoint('Eye').add(camera);
       });
