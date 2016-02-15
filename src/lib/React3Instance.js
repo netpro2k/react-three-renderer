@@ -1,4 +1,5 @@
 import THREE from 'three';
+
 import invariant from 'fbjs/lib/invariant';
 import warning from 'fbjs/lib/warning';
 import Viewport from './Viewport';
@@ -97,11 +98,28 @@ class React3DInstance {
   }
 
   _createRenderer() {
-    if (!this._canvas) {
+    const parameters = this._parameters;
+
+    if (window.altspace && window.altspace.inClient) {
+      // Shim out some methods that exist on WebGLRenderer but not AltspaceRenderer
+      const noop = function () {};
+      const renderer = window.altspace.getThreeJSRenderer();
+      renderer.setViewport = noop;
+      renderer.setSize = noop;
+
+      this._renderer = renderer;
+      const camera = new THREE.PerspectiveCamera();
+      this._mainCamera = camera;
+      window.altspace.getThreeJSTrackingSkeleton().then(function (s) {
+        const skeleton = s;
+        skeleton.getJoint('Eye').add(camera);
+      });
       return;
     }
 
-    const parameters = this._parameters;
+    if (!this._canvas) {
+      return;
+    }
 
     this._renderer = new THREE.WebGLRenderer({
       canvas: this._canvas,
@@ -269,7 +287,9 @@ class React3DInstance {
 
     let mainCamera = null;
 
-    if (this._mainCameraName) {
+    if (this._mainCamera) {
+      mainCamera = this._mainCamera;
+    } else if (this._mainCameraName) {
       const objectsWithMainCameraName = this._objectsByName[this._mainCameraName];
 
       if (objectsWithMainCameraName) {

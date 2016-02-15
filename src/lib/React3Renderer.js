@@ -721,11 +721,12 @@ class React3Renderer {
       toJSON: () => '---MARKUP---',
     };
 
-    Object.assign(container.userData, {
+    container.userData = {
+      ...container.userData,
       object3D: container,
       toJSON: () => '---USERDATA---',
       markup: rootMarkup,
-    });
+    };
 
     rootImage.parentMarkup = rootMarkup;
 

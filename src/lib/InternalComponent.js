@@ -145,12 +145,13 @@ class InternalComponent {
       invariant(!!this._threeObject.userData);
     }
 
-    Object.assign(this._threeObject.userData, {
+    this._threeObject.userData = {
+      ...this._threeObject.userData,
       object3D: this._threeObject,
       react3internalComponent: this, // used for highlighting etc
       toJSON: () => '---USERDATA---',
       markup,
-    });
+    };
 
     const threeElementDescriptors = this._react3RendererInstance.threeElementDescriptors;
 
